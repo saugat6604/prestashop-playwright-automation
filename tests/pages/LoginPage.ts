@@ -33,6 +33,14 @@ export class LoginPage {
     await this.signInButton.click();
   }
 
+  readonly authenticationError = this.page.getByRole("alert");
+
+  async expectAuthenticationError() {
+    await expect(this.frame.getByRole("alert")).toContainText(
+      "Authentication failed.",
+    );
+  }
+
   async expectSuccessfulLogin(firstName: string) {
     await expect(this.frame.getByText(firstName)).toBeVisible();
     await expect(this.signInLink).not.toBeVisible();

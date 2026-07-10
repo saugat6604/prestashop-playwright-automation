@@ -35,4 +35,25 @@ test.describe("User Login", () => {
     // Verify successful login
     await loginPage.expectSuccessfulLogin(user.firstName);
   });
+
+  test.only("should not login with incorrect password", async ({ page }) => {
+    const user = generateUser();
+
+    // Register user
+    await registerPage.register(user);
+    await registerPage.expectSuccessfulRegistration(user.firstName);
+
+    // Logout
+    await registerPage.logout();
+
+    //Click Signin
+    await registerPage.openLoginPage();
+
+    // Incorrect Password Login
+    user.password = "Jagdamba@123";
+    await loginPage.login(user.email, user.password);
+
+    // Verify authentication error
+    await loginPage.expectAuthenticationError();
+  });
 });
