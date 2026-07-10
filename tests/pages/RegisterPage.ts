@@ -16,6 +16,10 @@ export class RegisterPage {
     return this.frame.getByLabel("Sign in");
   }
 
+  async openLoginPage(): Promise<void> {
+    await this.signInLink.click();
+  }
+
   private get createAccountLink() {
     return this.frame.getByRole("link", {
       name: "Create your account",
