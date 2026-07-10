@@ -101,7 +101,7 @@ test.describe("User Login", () => {
     //Add validation for required fields
     await loginPage.expectRequiredFieldValidation(loginPage.getPasswordField());
   });
-  test.only("should show validation for invalid email format", async () => {
+  test("should show validation for invalid email format", async () => {
     await registerPage.openLoginPage();
 
     //Added invalid email and valid password
@@ -109,5 +109,24 @@ test.describe("User Login", () => {
 
     // Added validation for invalid email format
     await loginPage.expectInvalidEmailValidation(loginPage.getEmailField());
+  });
+
+  test.only("should login again after logout multiple time", async () => {
+    const user = generateUser();
+
+    await registerPage.register(user);
+    await registerPage.expectSuccessfulRegistration(user.firstName);
+
+    await registerPage.logout();
+    await registerPage.openLoginPage();
+
+    await loginPage.login(user.email, user.password);
+    await loginPage.expectSuccessfulLogin(user.firstName);
+
+    await registerPage.logout();
+    await registerPage.openLoginPage();
+
+    await loginPage.login(user.email, user.password);
+    await loginPage.expectSuccessfulLogin(user.firstName);
   });
 });
