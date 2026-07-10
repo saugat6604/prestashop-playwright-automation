@@ -36,7 +36,7 @@ test.describe("User Login", () => {
     await loginPage.expectSuccessfulLogin(user.firstName);
   });
 
-  test.only("should show validation when email and password are empty", async () => {
+  test("should show validation when email and password are empty", async () => {
     await registerPage.openLoginPage();
 
     //Add empty username and password
@@ -76,5 +76,17 @@ test.describe("User Login", () => {
     await loginPage.login(user.email, user.password);
 
     await loginPage.expectAuthenticationError();
+  });
+
+  test.only("should show validation when email is empty", async () => {
+    const user = generateUser();
+
+    await registerPage.openLoginPage();
+
+    //Add empty email and valid password
+    await loginPage.login("", user.password);
+
+    //Add validation for required fields
+    await loginPage.expectRequiredFieldValidation(loginPage.getEmailField());
   });
 });
