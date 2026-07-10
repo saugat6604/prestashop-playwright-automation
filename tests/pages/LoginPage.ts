@@ -53,6 +53,13 @@ export class LoginPage {
     return this.passwordField;
   }
 
+  async expectInvalidEmailValidation(field: Locator) {
+    await expect(field).toHaveJSProperty(
+      "validationMessage",
+      "Please include an '@' in the email address. 'invalid-email' is missing an '@'.",
+    );
+  }
+
   private get passwordField() {
     return this.frame.locator("#field-password");
   }

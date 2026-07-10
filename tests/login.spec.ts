@@ -90,7 +90,7 @@ test.describe("User Login", () => {
     await loginPage.expectRequiredFieldValidation(loginPage.getEmailField());
   });
 
-  test.only("should show validation when password is empty", async () => {
+  test("should show validation when password is empty", async () => {
     const user = generateUser();
 
     await registerPage.openLoginPage();
@@ -100,5 +100,14 @@ test.describe("User Login", () => {
 
     //Add validation for required fields
     await loginPage.expectRequiredFieldValidation(loginPage.getPasswordField());
+  });
+  test.only("should show validation for invalid email format", async () => {
+    await registerPage.openLoginPage();
+
+    //Added invalid email and valid password
+    await loginPage.login("invalid-email", "Password@123");
+
+    // Added validation for invalid email format
+    await loginPage.expectInvalidEmailValidation(loginPage.getEmailField());
   });
 });
