@@ -14,7 +14,7 @@ test.describe("User Login", () => {
     await registerPage.open();
   });
 
-  test("should login successfully with newly registered user", async ({
+  test("should login successfully with newly registered user and logout", async ({
     page,
   }) => {
     const user = generateUser();
@@ -36,7 +36,18 @@ test.describe("User Login", () => {
     await loginPage.expectSuccessfulLogin(user.firstName);
   });
 
-  test.only("should not login with incorrect password", async ({ page }) => {
+  test.only("should show validation when email and password are empty", async () => {
+    await registerPage.openLoginPage();
+
+    //Add empty username and password
+    await loginPage.login("", "");
+
+    //Add validation for required fields
+    await loginPage.expectRequiredFieldValidation(loginPage.getEmailField());
+    await loginPage.expectRequiredFieldValidation(loginPage.getPasswordField());
+  });
+
+  test("should not login with incorrect password", async ({ page }) => {
     const user = generateUser();
 
     // Register user
@@ -54,6 +65,16 @@ test.describe("User Login", () => {
     await loginPage.login(user.email, user.password);
 
     // Verify authentication error
+    await loginPage.expectAuthenticationError();
+  });
+
+  test("should not login with unregistered email", async () => {
+    const user = generateUser();
+
+    await registerPage.openLoginPage();
+
+    await loginPage.login(user.email, user.password);
+
     await loginPage.expectAuthenticationError();
   });
 });

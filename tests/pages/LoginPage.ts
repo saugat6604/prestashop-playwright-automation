@@ -1,11 +1,38 @@
 import { expect, Locator, Page, FrameLocator } from "@playwright/test";
 export class LoginPage {
+  async expectRequiredFieldValidation(field: Locator) {
+    await expect(field).toHaveJSProperty(
+      "validationMessage",
+      "Please fill out this field.",
+    );
+  }
+
   private readonly frame: FrameLocator;
 
   constructor(private readonly page: Page) {
     this.frame = page.frameLocator('iframe[name="framelive"]');
   }
 
+  private async expectValidationMessage(
+    locator: Locator,
+    expectedMessage: string,
+  ) {
+    const isValid = await locator.evaluate((element: HTMLInputElement) =>
+      element.checkValidity(),
+    );
+
+    expect(isValid).toBe(false);
+
+    const message = await this.getBrowserValidationMessage(locator);
+
+    expect(message).toContain(expectedMessage);
+  }
+
+  async getBrowserValidationMessage(locator: Locator) {
+    return locator.evaluate(
+      (element: HTMLInputElement) => element.validationMessage,
+    );
+  }
   private get signInLink() {
     return this.frame.getByLabel("Sign in");
   }
@@ -16,6 +43,14 @@ export class LoginPage {
 
   private get emailField() {
     return this.frame.locator("#field-email");
+  }
+
+  getEmailField() {
+    return this.emailField;
+  }
+
+  getPasswordField() {
+    return this.passwordField;
   }
 
   private get passwordField() {
