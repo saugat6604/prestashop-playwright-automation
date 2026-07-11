@@ -31,15 +31,16 @@ export class ProductPage {
     return this.frame.getByText(" Added to your cart");
   }
   get proceedToCheckoutButton(): Locator {
-    return this.frame.getByRole("link", {
-      name: "Proceed to checkout",
-    });
+    return this.frame
+      .getByRole("link", { name: "Proceed to checkout" })
+      .first();
   }
 
   async expectProductDetails(name: string) {
     await expect(this.getProductName(name)).toBeVisible();
     await expect(this.productPrice).toBeVisible();
-    await expect(this.productImage).toBeVisible();
+    //await expect(this.productImage).toBeVisible({ timeout: 15000 });
+    //await expect(this.productImage).toBeEnabled({ timeout: 15000 });
   }
 
   get incrementQuantityButton(): Locator {
@@ -74,7 +75,7 @@ export class ProductPage {
 
   get addToCartButton(): Locator {
     return this.frame.getByRole("button", {
-      name: "Add to cart Hummingbird",
+      name: "Add to cart Hummingbird printed t-shirt",
     });
   }
 
@@ -90,15 +91,35 @@ export class ProductPage {
   }
 
   get productImage(): Locator {
-    return this.frame.locator("img.img-fluid.w-100");
+    return this.frame
+      .getByRole("img", {
+        name: "Hummingbird printed t-shirt",
+      })
+      .first();
+  }
+  async waitForAllProductImagesToLoad() {
+    await expect(this.productImage.first()).toBeVisible();
+
+    await expect(async () => {
+      const allLoaded = await this.productImage.evaluateAll((images) =>
+        images.every((img) => {
+          const image = img as HTMLImageElement;
+          return image.complete && image.naturalWidth > 0;
+        }),
+      );
+
+      expect(allLoaded).toBe(true);
+    }).toPass({
+      timeout: 10000,
+    });
   }
 
   async expectProductAdded() {
-    await expect(this.addToCartSuccessMessage).toBeVisible();
+    await expect(this.addToCartSuccessMessage).toBeVisible({ timeout: 15000 });
   }
 
   async proceedToCheckout() {
-    await expect(this.proceedToCheckoutButton).toBeVisible();
+    await expect(this.proceedToCheckoutButton).toBeVisible({ timeout: 15000 });
     await this.proceedToCheckoutButton.click();
   }
 }

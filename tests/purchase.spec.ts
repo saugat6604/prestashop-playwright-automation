@@ -6,6 +6,7 @@ import { HomePage } from "../tests/pages/HomePage";
 import { ProductPage } from "../tests/pages/ProductPage";
 import { CartPage } from "../tests/pages/CartPage";
 import { CheckoutPage } from "../tests/pages/CheckoutPage";
+import { OrderSuccessPage } from "../tests/pages/OrderSuccessPage";
 
 import { generateUser, UserData } from "../tests/utils/faker";
 
@@ -18,6 +19,7 @@ test.describe("Purchase Flow", () => {
   let productPage: ProductPage;
   let cartPage: CartPage;
   let checkoutPage: CheckoutPage;
+  let orderSuccessPage: OrderSuccessPage;
 
   test.beforeEach(async ({ page }) => {
     registerPage = new RegisterPage(page);
@@ -26,13 +28,14 @@ test.describe("Purchase Flow", () => {
     productPage = new ProductPage(page);
     cartPage = new CartPage(page);
     checkoutPage = new CheckoutPage(page);
+    orderSuccessPage = new OrderSuccessPage(page);
 
     await registerPage.open();
   });
   function createUser(): UserData {
     return generateUser();
   }
-  test("should purchase a product successfully", async ({ page }) => {
+  test("from product search to order placement", async ({ page }) => {
     // Search product
 
     await homePage.searchProduct("t-shirt");
@@ -61,6 +64,7 @@ test.describe("Purchase Flow", () => {
 
     // // Add to cart
     await page.waitForTimeout(5000);
+
     await productPage.addToCartButton.click();
     await productPage.expectProductAdded();
 
@@ -82,25 +86,33 @@ test.describe("Purchase Flow", () => {
     const user = createUser();
 
     //Fill personal information and continue to address
+    await checkoutPage.expectPersonalInformationPageVisible();
     await registerPage.fillPersonalInformation(user, true, true);
 
     //  Fill address (if required)
+    await checkoutPage.expectAddressesPageVisible();
     await registerPage.fillAddress(user);
 
     //  Shipping
+    await checkoutPage.expectShippingMethodPageVisible();
+    await expect(checkoutPage.continueToPaymentButton).toBeVisible({
+      timeout: 15000,
+    });
     await checkoutPage.continueToPaymentButton.click();
-    await page.pause();
 
     //  Payment
-    // await checkoutPage.continueToPayment();
-    // await checkoutPage.selectCashOnDelivery();
-    // await checkoutPage.acceptTerms();
+    await checkoutPage.expectPaymentPageVisible();
+    await checkoutPage.selectCashOnDelivery();
+    await checkoutPage.cashOnDeliveryMessage.isVisible();
+    await checkoutPage.acceptTerms();
 
-    // // Place order
-    // await checkoutPage.placeOrder();
+    //  Place order
+    await checkoutPage.placeOrder();
 
-    // // Verify order confirmation
-    // await checkoutPage.expectOrderConfirmed();
-    // await checkoutPage.expectPaymentInformation();
+    //  Verify order confirmation
+    await orderSuccessPage.expectOrderConfirmation(
+      "Hummingbird printed t-shirt",
+    );
+    await page.pause();
   });
 });

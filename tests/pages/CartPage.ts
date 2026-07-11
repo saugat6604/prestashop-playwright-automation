@@ -7,6 +7,9 @@ export class CartPage {
 
   private readonly frame: FrameLocator;
 
+  get emptyCartMessage() {
+    return this.page.getByText("There are no more items in your cart");
+  }
   get cartQuantityInput(): Locator {
     return this.frame
       .getByRole("list", { name: "Products in cart" })
@@ -30,9 +33,11 @@ export class CartPage {
   private readonly total = this.page.locator(".cart-total .value");
 
   get checkoutButton(): Locator {
-    return this.frame.getByRole("link", {
-      name: /^Proceed to checkout$/,
-    });
+    return this.frame
+      .getByRole("link", {
+        name: "Proceed to checkout",
+      })
+      .last();
   }
 
   async removeProduct() {
@@ -43,8 +48,22 @@ export class CartPage {
     await expect(this.total).toBeVisible();
   }
 
+  private get shoppingCartTitle() {
+    return this.frame.getByRole("heading", {
+      name: "Shopping Cart",
+    });
+  }
+
+  async expectShoppingCartPageVisible() {
+    await expect(this.shoppingCartTitle).toBeVisible({ timeout: 15000 });
+  }
+
   async proceedToCheckout() {
-    await this.checkoutButton.click();
+    await this.expectShoppingCartPageVisible();
+    await expect(this.checkoutButton).toBeVisible({ timeout: 15000 });
+    await this.checkoutButton.click({
+      force: true,
+    });
   }
   getCartSummary(quantity: number): Locator {
     return this.frame.getByRole("link", {
