@@ -3,7 +3,9 @@ import { UserData } from "../utils/faker";
 
 export class RegisterPage {
   private readonly frame: FrameLocator;
-
+  get continueButton() {
+    return this.frame.getByRole("button", { name: "Continue" });
+  }
   constructor(private readonly page: Page) {
     this.frame = page.frameLocator('iframe[name="framelive"]');
   }
@@ -148,6 +150,61 @@ export class RegisterPage {
     });
   }
 
+  async fillPersonalInformation(
+    user: UserData,
+    acceptTerms = true,
+    checkPrivacy = true,
+  ): Promise<void> {
+    await this.mrRadio.check();
+
+    await this.firstNameInput.fill(user.firstName);
+
+    await this.lastNameInput.fill(user.lastName);
+
+    await this.emailInput.fill(user.email);
+
+    await this.birthDateInput.fill(user.birthDate);
+
+    if (acceptTerms) {
+      await this.termsCheckbox.check();
+    }
+
+    if (checkPrivacy && !(await this.privacyCheckbox.isChecked())) {
+      await this.privacyCheckbox.check();
+    }
+
+    await this.continueButton.click();
+  }
+
+  get addressInput() {
+    return this.frame.getByRole("textbox", {
+      name: "Address",
+      exact: true,
+    });
+  }
+
+  get zipCodeInput() {
+    return this.frame.getByRole("textbox", {
+      name: "Zip/Postal Code",
+    });
+  }
+
+  get cityInput() {
+    return this.frame.getByRole("textbox", {
+      name: "City",
+    });
+  }
+
+  async fillAddress(user: UserData): Promise<void> {
+    await this.addressInput.fill(user.address);
+
+    await this.zipCodeInput.fill(user.zipCode);
+
+    await this.cityInput.fill(user.city);
+
+    await this.continueButton.click();
+  }
+
   async fillRegistrationForm(
     user: UserData,
     options: {
@@ -204,7 +261,6 @@ export class RegisterPage {
     await this.openRegistrationForm();
 
     await this.fillRegistrationForm(user, options);
-
     await this.submit();
   }
 

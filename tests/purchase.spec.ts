@@ -7,7 +7,7 @@ import { ProductPage } from "../tests/pages/ProductPage";
 import { CartPage } from "../tests/pages/CartPage";
 import { CheckoutPage } from "../tests/pages/CheckoutPage";
 
-import { generateUser } from "../tests/utils/faker";
+import { generateUser, UserData } from "../tests/utils/faker";
 
 test.describe("Purchase Flow", () => {
   test.setTimeout(60000);
@@ -29,22 +29,10 @@ test.describe("Purchase Flow", () => {
 
     await registerPage.open();
   });
-
+  function createUser(): UserData {
+    return generateUser();
+  }
   test("should purchase a product successfully", async ({ page }) => {
-    // const user = generateUser();
-
-    // // Register user
-    // await registerPage.register(user);
-    // await registerPage.expectSuccessfulRegistration(user.firstName);
-
-    // // Logout
-    // await registerPage.logout();
-
-    // // Login
-    // await registerPage.openLoginPage();
-    // await loginPage.login(user.email, user.password);
-    // await loginPage.expectSuccessfulLogin(user.firstName);
-
     // Search product
 
     await homePage.searchProduct("t-shirt");
@@ -66,14 +54,12 @@ test.describe("Purchase Flow", () => {
     await homePage.getProduct("Hummingbird printed t-shirt").click();
 
     // // Verify product details
-
     await productPage.expectProductDetails("Hummingbird printed t-shirt");
 
     // Verify Add to cart button is enabled
     await productPage.addToCartButton.isEnabled();
 
     // // Add to cart
-
     await page.waitForTimeout(5000);
     await productPage.addToCartButton.click();
     await productPage.expectProductAdded();
@@ -92,20 +78,20 @@ test.describe("Purchase Flow", () => {
 
     // Proceed to checkout
     await cartPage.proceedToCheckout();
-    await page.pause(); // Wait for the cart to update
 
-    // // Fill address (if required)
-    // await checkoutPage.fillAddress({
-    //   alias: "Home",
-    //   address: "Kathmandu",
-    //   zipCode: "44444",
-    //   city: "Kathmandu",
-    // });
+    const user = createUser();
 
-    // // Shipping
-    // await checkoutPage.continueToShipping();
+    //Fill personal information and continue to address
+    await registerPage.fillPersonalInformation(user, true, true);
 
-    // // Payment
+    //  Fill address (if required)
+    await registerPage.fillAddress(user);
+
+    //  Shipping
+    await checkoutPage.continueToPaymentButton.click();
+    await page.pause();
+
+    //  Payment
     // await checkoutPage.continueToPayment();
     // await checkoutPage.selectCashOnDelivery();
     // await checkoutPage.acceptTerms();
