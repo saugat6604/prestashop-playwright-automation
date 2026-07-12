@@ -203,18 +203,6 @@ npx playwright show-report
 
 # Screenshots
 
-## Project Structure
-
-![Project Structure](screenshots/project-structure.png)
-
----
-
-## HTML Report Summary
-
-![HTML Report](screenshots/html-report-summary.png)
-
----
-
 ## Test Result Details
 
 ![Test Details](Screenshot/Screenshot1.png)
