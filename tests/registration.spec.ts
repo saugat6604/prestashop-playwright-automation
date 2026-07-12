@@ -1,19 +1,17 @@
 import { test, expect } from "@playwright/test";
 import { RegisterPage } from "../tests/pages/RegisterPage";
 import { generateUser, UserData } from "../tests/utils/faker";
+import { HomePage } from "@pages/HomePage";
 
 test.describe("User Registration", () => {
-  test.setTimeout(60000);
-
-  test.describe.configure({
-    mode: "parallel",
-  });
   let registerPage: RegisterPage;
+  let homePage: HomePage;
 
   test.beforeEach(async ({ page }) => {
     registerPage = new RegisterPage(page);
+    homePage = new HomePage(page);
 
-    await registerPage.open();
+    await homePage.open();
   });
 
   test("should register a new customer successfully and logout", async () => {

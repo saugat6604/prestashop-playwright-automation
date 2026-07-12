@@ -1,26 +1,23 @@
 import { expect, FrameLocator, Locator, Page } from "@playwright/test";
 import { UserData } from "../utils/faker";
+import { HomePage } from "./HomePage";
+let homePage: HomePage;
 
 export class RegisterPage {
-  private readonly frame: FrameLocator;
-  get continueButton() {
-    return this.frame.getByRole("button", { name: "Continue" });
-  }
   constructor(private readonly page: Page) {
     this.frame = page.frameLocator('iframe[name="framelive"]');
+    homePage = new HomePage(page);
+  }
+
+  private readonly frame: FrameLocator;
+
+  get continueButton() {
+    return this.frame.getByRole("button", { name: "Continue" });
   }
 
   // -------------------------
   // Locators
   // -------------------------
-
-  private get signInLink() {
-    return this.frame.getByLabel("Sign in");
-  }
-
-  async openLoginPage(): Promise<void> {
-    await this.signInLink.click();
-  }
 
   private get createAccountLink() {
     return this.frame.getByRole("link", {
@@ -47,11 +44,6 @@ export class RegisterPage {
   }
 
   private static readonly URL = "https://demo.prestashop.com/#/en/front";
-
-  async open() {
-    await this.page.goto(RegisterPage.URL);
-    await expect(this.page.locator('iframe[name="framelive"]')).toBeVisible();
-  }
 
   private get emailInput() {
     return this.frame.getByRole("textbox", {
@@ -138,7 +130,7 @@ export class RegisterPage {
   // -------------------------
 
   async openRegistrationForm() {
-    await this.signInLink.click();
+    await homePage.signInLink.click();
 
     await this.createAccountLink.click();
 

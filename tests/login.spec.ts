@@ -3,22 +3,25 @@ import { RegisterPage } from "../tests/pages/RegisterPage";
 import { LoginPage } from "../tests/pages/LoginPage";
 import { generateUser } from "../tests/utils/faker";
 import { registerAndOpenLogin } from "../tests/utils/authHelper";
+import { HomePage } from "@pages/HomePage";
 
 test.describe("User Login", () => {
   let registerPage: RegisterPage;
   let loginPage: LoginPage;
+  let homePage: HomePage;
 
   test.beforeEach(async ({ page }) => {
     registerPage = new RegisterPage(page);
     loginPage = new LoginPage(page);
+    homePage = new HomePage(page);
 
-    await registerPage.open();
+    await homePage.open();
   });
 
   test("should login successfully with newly registered user and logout", async () => {
     const user = generateUser();
 
-    await registerAndOpenLogin(registerPage, user);
+    await registerAndOpenLogin(registerPage, homePage, user);
 
     // Login
     await loginPage.login(user.email, user.password);
@@ -28,7 +31,7 @@ test.describe("User Login", () => {
   });
 
   test("should show validation when email and password are empty", async () => {
-    await registerPage.openLoginPage();
+    await homePage.openLoginPage();
 
     //Add empty username and password
     await loginPage.login("", "");
@@ -41,11 +44,11 @@ test.describe("User Login", () => {
   test("should not login with incorrect password", async () => {
     const user = generateUser();
 
-    await registerPage.openLoginPage();
+    await homePage.openLoginPage();
 
     // Incorrect Password Login
-    user.password = "Jagdamba@123";
-    await loginPage.login(user.email, user.password);
+    const wrongPassword = "Jagdamba@123";
+    await loginPage.login(user.email, wrongPassword);
 
     // Verify authentication error
     await loginPage.expectAuthenticationError();
@@ -54,7 +57,7 @@ test.describe("User Login", () => {
   test("should not login with unregistered email", async () => {
     const user = generateUser();
 
-    await registerPage.openLoginPage();
+    await homePage.openLoginPage();
 
     await loginPage.login(user.email, user.password);
 
@@ -64,7 +67,7 @@ test.describe("User Login", () => {
   test("should show validation when email is empty", async () => {
     const user = generateUser();
 
-    await registerPage.openLoginPage();
+    await homePage.openLoginPage();
 
     //Add empty email and valid password
     await loginPage.login("", user.password);
@@ -76,7 +79,7 @@ test.describe("User Login", () => {
   test("should show validation when password is empty", async () => {
     const user = generateUser();
 
-    await registerPage.openLoginPage();
+    await homePage.openLoginPage();
 
     //Add empty email
     await loginPage.login(user.email, "");
@@ -85,7 +88,7 @@ test.describe("User Login", () => {
     await loginPage.expectRequiredFieldValidation(loginPage.getPasswordField());
   });
   test("should show validation for invalid email format", async () => {
-    await registerPage.openLoginPage();
+    await homePage.openLoginPage();
 
     //Added invalid email and valid password
     await loginPage.login("invalid-email", "Password@123");
@@ -94,16 +97,16 @@ test.describe("User Login", () => {
     await loginPage.expectInvalidEmailValidation(loginPage.getEmailField());
   });
 
-  test.only("should login again after logout multiple time", async () => {
+  test("should login again after logout multiple time", async () => {
     const user = generateUser();
 
-    await registerAndOpenLogin(registerPage, user);
+    await registerAndOpenLogin(registerPage, homePage, user);
 
     await loginPage.login(user.email, user.password);
     await loginPage.expectSuccessfulLogin(user.firstName);
 
     await registerPage.logout();
-    await registerPage.openLoginPage();
+    await homePage.openLoginPage();
 
     await loginPage.login(user.email, user.password);
     await loginPage.expectSuccessfulLogin(user.firstName);

@@ -1,6 +1,10 @@
 import { expect, Locator, Page, FrameLocator } from "@playwright/test";
 
 export class HomePage {
+  constructor(private readonly page: Page) {
+    this.frame = page.frameLocator('iframe[name="framelive"]');
+  }
+
   getProduct(productName: string): Locator {
     return this.frame
       .locator("a.product-miniature__title", {
@@ -13,10 +17,6 @@ export class HomePage {
     return this.frame.locator(".product-miniature__price").first();
   }
   private readonly frame: FrameLocator;
-
-  constructor(private readonly page: Page) {
-    this.frame = page.frameLocator('iframe[name="framelive"]');
-  }
 
   getSearchResultsHeading(product: string): Locator {
     return this.frame.getByRole("heading", {
@@ -57,5 +57,16 @@ export class HomePage {
 
   async expectSearchResult(product: string) {
     await expect(this.productName.first()).toContainText(product);
+  }
+  async open() {
+    await this.page.goto("/#/en/front");
+  }
+
+  get signInLink() {
+    return this.frame.getByLabel("Sign in");
+  }
+
+  async openLoginPage(): Promise<void> {
+    await this.signInLink.click();
   }
 }

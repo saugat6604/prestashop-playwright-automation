@@ -1,6 +1,10 @@
 import { expect, Page, FrameLocator, Locator } from "@playwright/test";
 
 export class ProductPage {
+  constructor(private readonly page: Page) {
+    this.frame = page.frameLocator('iframe[name="framelive"]');
+  }
+
   async expectCartQuantity(quantity: number): Promise<void> {
     await expect(this.frame.getByText(`Quantity: ${quantity}`)).toBeVisible();
   }
@@ -10,9 +14,6 @@ export class ProductPage {
     });
   }
 
-  constructor(private readonly page: Page) {
-    this.frame = page.frameLocator('iframe[name="framelive"]');
-  }
   private readonly frame: FrameLocator;
 
   getProductName(productName: string): Locator {

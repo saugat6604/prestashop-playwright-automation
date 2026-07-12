@@ -1,6 +1,16 @@
 import { expect, Page, Frame, FrameLocator } from "@playwright/test";
 
 export class CheckoutPage {
+  constructor(private readonly page: Page) {
+    this.frame = page.frameLocator('iframe[name="framelive"]');
+  }
+  private readonly frame: FrameLocator;
+
+  private readonly orderSummary = this.page.locator("#js-checkout-summary");
+  private readonly continueButton = this.page.locator(
+    'button[name="confirm-addresses"]',
+  );
+
   private get shippingMethodTitle() {
     return this.frame.getByRole("heading", {
       name: "Shipping Method",
@@ -72,15 +82,6 @@ export class CheckoutPage {
       name: "Place Order",
     });
   }
-  constructor(private readonly page: Page) {
-    this.frame = page.frameLocator('iframe[name="framelive"]');
-  }
-  private readonly frame: FrameLocator;
-
-  private readonly orderSummary = this.page.locator("#js-checkout-summary");
-  private readonly continueButton = this.page.locator(
-    'button[name="confirm-addresses"]',
-  );
 
   get continueToPaymentButton() {
     return this.frame.getByRole("button", {
