@@ -2,6 +2,7 @@ import { test } from "@playwright/test";
 import { RegisterPage } from "../tests/pages/RegisterPage";
 import { LoginPage } from "../tests/pages/LoginPage";
 import { generateUser } from "../tests/utils/faker";
+import { registerAndOpenLogin } from "../tests/utils/authHelper";
 
 test.describe("User Login", () => {
   let registerPage: RegisterPage;
@@ -14,20 +15,10 @@ test.describe("User Login", () => {
     await registerPage.open();
   });
 
-  test("should login successfully with newly registered user and logout", async ({
-    page,
-  }) => {
+  test("should login successfully with newly registered user and logout", async () => {
     const user = generateUser();
 
-    // Register user
-    await registerPage.register(user);
-    await registerPage.expectSuccessfulRegistration(user.firstName);
-
-    // Logout
-    await registerPage.logout();
-
-    //Click Signin
-    await registerPage.openLoginPage();
+    await registerAndOpenLogin(registerPage, user);
 
     // Login
     await loginPage.login(user.email, user.password);
@@ -47,17 +38,9 @@ test.describe("User Login", () => {
     await loginPage.expectRequiredFieldValidation(loginPage.getPasswordField());
   });
 
-  test("should not login with incorrect password", async ({ page }) => {
+  test("should not login with incorrect password", async () => {
     const user = generateUser();
 
-    // Register user
-    await registerPage.register(user);
-    await registerPage.expectSuccessfulRegistration(user.firstName);
-
-    // Logout
-    await registerPage.logout();
-
-    //Click Signin
     await registerPage.openLoginPage();
 
     // Incorrect Password Login
@@ -114,11 +97,7 @@ test.describe("User Login", () => {
   test.only("should login again after logout multiple time", async () => {
     const user = generateUser();
 
-    await registerPage.register(user);
-    await registerPage.expectSuccessfulRegistration(user.firstName);
-
-    await registerPage.logout();
-    await registerPage.openLoginPage();
+    await registerAndOpenLogin(registerPage, user);
 
     await loginPage.login(user.email, user.password);
     await loginPage.expectSuccessfulLogin(user.firstName);

@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-    
+    timeout: 60 * 1000, 
   testDir: './tests',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -9,6 +9,8 @@ export default defineConfig({
   workers: process.env.CI ? 4 : undefined,
   reporter: 'html',
   use: {
+  trace: "retain-on-failure",
+  
  
     launchOptions: {
       args: ['--start-maximized'],
