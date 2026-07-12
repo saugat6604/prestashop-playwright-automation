@@ -1,4 +1,5 @@
 import { expect, Page, Frame, FrameLocator } from "@playwright/test";
+import { UserData } from "../utils/faker";
 
 export class CheckoutPage {
   constructor(private readonly page: Page) {
@@ -7,9 +8,9 @@ export class CheckoutPage {
   private readonly frame: FrameLocator;
 
   private readonly orderSummary = this.page.locator("#js-checkout-summary");
-  private readonly continueButton = this.page.locator(
-    'button[name="confirm-addresses"]',
-  );
+  get continueButton() {
+    return this.frame.getByRole("button", { name: "Continue" });
+  }
 
   private get shippingMethodTitle() {
     return this.frame.getByRole("heading", {
@@ -65,6 +66,10 @@ export class CheckoutPage {
     return this.frame.getByText("You pay for the merchandise upon delivery");
   }
 
+  async expectCashOnDeliveryMessageVisible() {
+    await expect(this.cashOnDeliveryMessage).toBeVisible();
+  }
+
   private get cashOnDeliveryRadio() {
     return this.frame.getByRole("radio", {
       name: "Pay by Cash on Delivery",
@@ -89,11 +94,111 @@ export class CheckoutPage {
     });
   }
 
+  async continueToPayment() {
+    await this.continueToPaymentButton.click();
+  }
+
   async expectOrderSummary() {
     await expect(this.orderSummary).toBeVisible();
   }
 
   async continueAddress() {
     await this.continueButton.click();
+  }
+
+  async fillPersonalInformation(
+    user: UserData,
+    acceptTerms = true,
+    checkPrivacy = true,
+  ): Promise<void> {
+    await this.mrRadio.check();
+
+    await this.firstNameInput.fill(user.firstName);
+
+    await this.lastNameInput.fill(user.lastName);
+
+    await this.emailInput.fill(user.email);
+
+    await this.birthDateInput.fill(user.birthDate);
+
+    if (acceptTerms) {
+      await this.termsCheckbox.check();
+    }
+
+    if (checkPrivacy && !(await this.privacyCheckbox.isChecked())) {
+      await this.privacyCheckbox.check();
+    }
+
+    await this.continueButton.click();
+  }
+
+  private get mrRadio() {
+    return this.frame.getByRole("radio", {
+      name: "Mr.",
+    });
+  }
+
+  private get firstNameInput() {
+    return this.frame.getByRole("textbox", {
+      name: "First name",
+    });
+  }
+
+  private get lastNameInput() {
+    return this.frame.getByRole("textbox", {
+      name: "Last name",
+    });
+  }
+
+  private get emailInput() {
+    return this.frame.getByRole("textbox", {
+      name: "Email",
+      exact: true,
+    });
+  }
+
+  private get birthDateInput() {
+    return this.frame.getByRole("textbox", {
+      name: "Birthdate",
+    });
+  }
+
+  private get termsCheckbox() {
+    return this.frame.getByRole("checkbox", {
+      name: /terms/i,
+    });
+  }
+
+  private get privacyCheckbox() {
+    return this.frame.locator("#field-customer_privacy");
+  }
+
+  async fillAddress(user: UserData): Promise<void> {
+    await this.addressInput.fill(user.address);
+
+    await this.zipCodeInput.fill(user.zipCode);
+
+    await this.cityInput.fill(user.city);
+
+    await this.continueButton.click();
+  }
+
+  get addressInput() {
+    return this.frame.getByRole("textbox", {
+      name: "Address",
+      exact: true,
+    });
+  }
+
+  get zipCodeInput() {
+    return this.frame.getByRole("textbox", {
+      name: "Zip/Postal Code",
+    });
+  }
+
+  get cityInput() {
+    return this.frame.getByRole("textbox", {
+      name: "City",
+    });
   }
 }

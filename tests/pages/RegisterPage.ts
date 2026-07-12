@@ -142,32 +142,6 @@ export class RegisterPage {
     });
   }
 
-  async fillPersonalInformation(
-    user: UserData,
-    acceptTerms = true,
-    checkPrivacy = true,
-  ): Promise<void> {
-    await this.mrRadio.check();
-
-    await this.firstNameInput.fill(user.firstName);
-
-    await this.lastNameInput.fill(user.lastName);
-
-    await this.emailInput.fill(user.email);
-
-    await this.birthDateInput.fill(user.birthDate);
-
-    if (acceptTerms) {
-      await this.termsCheckbox.check();
-    }
-
-    if (checkPrivacy && !(await this.privacyCheckbox.isChecked())) {
-      await this.privacyCheckbox.check();
-    }
-
-    await this.continueButton.click();
-  }
-
   get addressInput() {
     return this.frame.getByRole("textbox", {
       name: "Address",

@@ -13,6 +13,15 @@ export class HomePage {
       .first();
   }
 
+  get searchInput(): Locator {
+    return this.frame.getByPlaceholder("Search products...");
+  }
+  async searchProduct(product: string) {
+    await this.searchInput.click();
+    await this.searchInput.fill(product);
+    await this.searchInput.press("Enter");
+  }
+
   get productPrice(): Locator {
     return this.frame.locator(".product-miniature__price").first();
   }
@@ -22,19 +31,6 @@ export class HomePage {
     return this.frame.getByRole("heading", {
       name: new RegExp(`Search results for "${product}"`, "i"),
     });
-  }
-
-  get searchInput(): Locator {
-    return this.frame.getByPlaceholder("Search products...");
-  }
-  private readonly searchButton = this.page.locator('button[type="submit"]');
-  private readonly productItems = this.page.locator(".product-miniature");
-  private readonly productName = this.page.locator(".product-title");
-
-  async searchProduct(product: string) {
-    await this.searchInput.click();
-    await this.searchInput.fill(product);
-    await this.searchInput.press("Enter");
   }
 
   async openProduct(productName: string) {

@@ -14,21 +14,16 @@ export class SearchPage {
       .first();
   }
 
+  async openProduct(product: string) {
+    await this.getProduct(product).click();
+  }
+
   get productPrice(): Locator {
     return this.frame.locator(".product-miniature__price").first();
   }
 
   get productImage(): Locator {
     return this.frame.locator("img.product-miniature__image").first();
-  }
-
-  get searchInput(): Locator {
-    return this.frame.getByPlaceholder("Search products...");
-  }
-  async searchProduct(product: string) {
-    await this.searchInput.click();
-    await this.searchInput.fill(product);
-    await this.searchInput.press("Enter");
   }
 
   get productTitles() {

@@ -80,6 +80,11 @@ export class ProductPage {
     });
   }
 
+  async addToCart() {
+    await expect(this.addToCartButton).toBeEnabled();
+    await this.addToCartButton.click();
+  }
+
   async increaseQuantityToTwo(): Promise<void> {
     if ((await this.quantityInput.inputValue()) !== "2") {
       await this.incrementQuantityButton.click();

@@ -11,18 +11,16 @@ export async function addProductToCart(
   cartPage: CartPage,
   product: string,
 ) {
-  await searchPage.searchProduct(product);
+  await homePage.searchProduct(product);
 
   await expect(searchPage.getSearchResultsHeading(product)).toBeVisible();
   await expect(searchPage.getProduct(product)).toBeVisible();
 
-  await homePage.getProduct(product).click();
+  await searchPage.openProduct(product);
 
   await productPage.expectProductDetails(product);
 
-  await expect(productPage.addToCartButton).toBeEnabled();
-
-  await productPage.addToCartButton.click();
+  await productPage.addToCart();
 
   await productPage.expectProductAdded();
   await productPage.expectCartProduct(product);

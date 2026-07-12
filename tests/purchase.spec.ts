@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test } from "@playwright/test";
 import { RegisterPage } from "../tests/pages/RegisterPage";
 import { HomePage } from "../tests/pages/HomePage";
 import { ProductPage } from "../tests/pages/ProductPage";
@@ -10,8 +10,6 @@ import { addProductToCart } from "./utils/cartHelper";
 import { generateUser } from "../tests/utils/faker";
 
 test.describe("Purchase Flow", () => {
-  test.setTimeout(60000);
-
   let registerPage: RegisterPage;
   let homePage: HomePage;
   let productPage: ProductPage;
@@ -32,7 +30,7 @@ test.describe("Purchase Flow", () => {
     await homePage.open();
   });
 
-  test("from product search to order placement", async ({ page }) => {
+  test("from product search to order placement", async () => {
     // Add product to cart
     const product = "Hummingbird printed t-shirt";
 
@@ -52,27 +50,23 @@ test.describe("Purchase Flow", () => {
     // Proceed to checkout
     await cartPage.proceedToCheckout();
 
-    const user = generateUser();
-
     // Fill personal information and continue to address
+    const user = generateUser();
     await checkoutPage.expectPersonalInformationPageVisible();
-    await registerPage.fillPersonalInformation(user, true, true);
+    await checkoutPage.fillPersonalInformation(user, true, true);
 
     // Fill address
     await checkoutPage.expectAddressesPageVisible();
-    await registerPage.fillAddress(user);
+    await checkoutPage.fillAddress(user);
 
     // Shipping
     await checkoutPage.expectShippingMethodPageVisible();
-    await expect(checkoutPage.continueToPaymentButton).toBeVisible({
-      timeout: 15000,
-    });
-    await checkoutPage.continueToPaymentButton.click();
+    await checkoutPage.continueToPayment();
 
     // Payment
     await checkoutPage.expectPaymentPageVisible();
     await checkoutPage.selectCashOnDelivery();
-    await checkoutPage.cashOnDeliveryMessage.isVisible();
+    await checkoutPage.expectCashOnDeliveryMessageVisible();
     await checkoutPage.acceptTerms();
 
     // Place order
