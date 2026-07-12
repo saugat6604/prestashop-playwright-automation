@@ -1,15 +1,11 @@
 import { test, expect } from "@playwright/test";
 import { SearchPage } from "../tests/pages/SearchPage";
-import { ProductPage } from "@pages/ProductPage";
-import { HomePage } from "@pages/HomePage";
 
 test.describe("Product Search", () => {
   let searchPage: SearchPage;
-  let homePage: HomePage;
 
   test.beforeEach(async ({ page }) => {
     searchPage = new SearchPage(page);
-    homePage = new HomePage(page);
     await page.goto("https://demo.prestashop.com/#/en/front");
   });
 
@@ -19,6 +15,12 @@ test.describe("Product Search", () => {
     await expect(searchPage.getSearchResultsHeading(product)).toBeVisible();
     await searchPage.expectFirstSearchResult(product);
     await expect(searchPage.searchInput).toHaveValue(product);
+
+    // Verify price is shown
+    await expect(searchPage.productPrice).toBeVisible();
+
+    // Verify Product image is visible
+    await expect(searchPage.productImage).toBeVisible();
   });
 
   test("should show no results for a non-existing product", async ({
@@ -26,7 +28,7 @@ test.describe("Product Search", () => {
   }) => {
     const product = "RandomProduct12345";
 
-    await homePage.searchProduct(product);
+    await searchPage.searchProduct(product);
     await expect(searchPage.noSearchResultsHeading).toBeVisible();
   });
 });

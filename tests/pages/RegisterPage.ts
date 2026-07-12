@@ -325,4 +325,22 @@ export class RegisterPage {
 
     expect(message).toContain(expectedMessage);
   }
+
+  async expectInvalidEmailValidation() {
+    const validationMessage = await this.getBrowserValidationMessage(
+      this.emailField,
+    );
+
+    expect(validationMessage).toContain("Please include an '@'");
+  }
+
+  async expectPasswordLengthValidation() {
+    const validationMessage = await this.getBrowserValidationMessage(
+      this.passwordField,
+    );
+
+    expect(validationMessage).toMatch(
+      /Please lengthen this text|password length is invalid/i,
+    );
+  }
 }

@@ -1,118 +1,84 @@
 import { test, expect } from "@playwright/test";
-
 import { RegisterPage } from "../tests/pages/RegisterPage";
-import { LoginPage } from "../tests/pages/LoginPage";
 import { HomePage } from "../tests/pages/HomePage";
 import { ProductPage } from "../tests/pages/ProductPage";
 import { CartPage } from "../tests/pages/CartPage";
 import { CheckoutPage } from "../tests/pages/CheckoutPage";
 import { OrderSuccessPage } from "../tests/pages/OrderSuccessPage";
-
-import { generateUser, UserData } from "../tests/utils/faker";
+import { SearchPage } from "../tests/pages/SearchPage";
+import { addProductToCart } from "./utils/cartHelper";
+import { generateUser } from "../tests/utils/faker";
 
 test.describe("Purchase Flow", () => {
   test.setTimeout(60000);
 
   let registerPage: RegisterPage;
-  let loginPage: LoginPage;
   let homePage: HomePage;
   let productPage: ProductPage;
   let cartPage: CartPage;
   let checkoutPage: CheckoutPage;
   let orderSuccessPage: OrderSuccessPage;
+  let searchPage: SearchPage;
 
   test.beforeEach(async ({ page }) => {
     registerPage = new RegisterPage(page);
-    loginPage = new LoginPage(page);
     homePage = new HomePage(page);
     productPage = new ProductPage(page);
     cartPage = new CartPage(page);
     checkoutPage = new CheckoutPage(page);
     orderSuccessPage = new OrderSuccessPage(page);
+    searchPage = new SearchPage(page);
 
     await registerPage.open();
   });
-  function createUser(): UserData {
-    return generateUser();
-  }
+
   test("from product search to order placement", async ({ page }) => {
-    // Search product
+    // Add product to cart
+    const product = "Hummingbird printed t-shirt";
 
-    await homePage.searchProduct("t-shirt");
-    await expect(homePage.getSearchResultsHeading("t-shirt")).toBeVisible();
-    await expect(
-      homePage.getProduct("Hummingbird printed t-shirt"),
-    ).toBeVisible();
-
-    //Verify search text is stored
-    await expect(homePage.searchInput).toHaveValue("t-shirt");
-
-    //Verify price is shown
-    await expect(homePage.productPrice).toBeVisible();
-
-    //Verify Product image is visible
-    await expect(homePage.productImage).toBeVisible();
-
-    // Open product
-    await homePage.getProduct("Hummingbird printed t-shirt").click();
-
-    // // Verify product details
-    await productPage.expectProductDetails("Hummingbird printed t-shirt");
-
-    // Verify Add to cart button is enabled
-    await productPage.addToCartButton.isEnabled();
-
-    // // Add to cart
-    await page.waitForTimeout(5000);
-
-    await productPage.addToCartButton.click();
-    await productPage.expectProductAdded();
-
-    // // Verify cart modal
-    await productPage.expectCartProduct("Hummingbird printed t-shirt");
-    await productPage.expectCartQuantity(1);
-
-    // Proceed to cart
-    await productPage.proceedToCheckout();
+    await addProductToCart(
+      homePage,
+      searchPage,
+      productPage,
+      cartPage,
+      product,
+    );
 
     // Update quantity
     await cartPage.updateCartQuantity(11);
 
-    await expect(cartPage.getCartSummary(11)).toBeVisible();
+    await cartPage.expectCartQuantity(11);
 
     // Proceed to checkout
     await cartPage.proceedToCheckout();
 
-    const user = createUser();
+    const user = generateUser();
 
-    //Fill personal information and continue to address
+    // Fill personal information and continue to address
     await checkoutPage.expectPersonalInformationPageVisible();
     await registerPage.fillPersonalInformation(user, true, true);
 
-    //  Fill address (if required)
+    // Fill address
     await checkoutPage.expectAddressesPageVisible();
     await registerPage.fillAddress(user);
 
-    //  Shipping
+    // Shipping
     await checkoutPage.expectShippingMethodPageVisible();
     await expect(checkoutPage.continueToPaymentButton).toBeVisible({
       timeout: 15000,
     });
     await checkoutPage.continueToPaymentButton.click();
 
-    //  Payment
+    // Payment
     await checkoutPage.expectPaymentPageVisible();
     await checkoutPage.selectCashOnDelivery();
     await checkoutPage.cashOnDeliveryMessage.isVisible();
     await checkoutPage.acceptTerms();
 
-    //  Place order
+    // Place order
     await checkoutPage.placeOrder();
 
-    //  Verify order confirmation
-    await orderSuccessPage.expectOrderConfirmation(
-      "Hummingbird printed t-shirt",
-    );
-    await page.pause();
+    // Verify order confirmation
+    await orderSuccessPage.expectOrderConfirmation(product);
   });
 });

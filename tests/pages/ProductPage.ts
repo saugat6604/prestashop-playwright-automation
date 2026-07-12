@@ -39,8 +39,8 @@ export class ProductPage {
   async expectProductDetails(name: string) {
     await expect(this.getProductName(name)).toBeVisible();
     await expect(this.productPrice).toBeVisible();
-    //await expect(this.productImage).toBeVisible({ timeout: 15000 });
-    //await expect(this.productImage).toBeEnabled({ timeout: 15000 });
+    await this.page.waitForTimeout(5000);
+    await expect(this.productImage).toBeVisible();
   }
 
   get incrementQuantityButton(): Locator {

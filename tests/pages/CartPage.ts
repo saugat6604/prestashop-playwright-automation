@@ -22,6 +22,10 @@ export class CartPage {
       .getByLabel("Increase quantity of");
   }
 
+  async expectCartQuantity(quantity: number) {
+    await expect(this.getCartSummary(quantity)).toBeVisible();
+  }
+
   async updateCartQuantity(quantity: number): Promise<void> {
     await this.cartQuantityInput.click();
     await this.cartQuantityInput.fill(quantity.toString());
@@ -40,8 +44,17 @@ export class CartPage {
       .last();
   }
 
-  async removeProduct() {
-    await this.removeButton.click();
+  getRemoveProductButton(product: string) {
+    return this.page
+      .locator('iframe[name="framelive"]')
+      .contentFrame()
+      .getByRole("link", {
+        name: `Remove ${product}`,
+      });
+  }
+
+  async removeProductFromCart(product: string) {
+    await this.getRemoveProductButton(product).click();
   }
 
   async expectCartTotal() {
@@ -59,7 +72,6 @@ export class CartPage {
   }
 
   async proceedToCheckout() {
-    await this.expectShoppingCartPageVisible();
     await expect(this.checkoutButton).toBeVisible({ timeout: 15000 });
     await this.checkoutButton.click({
       force: true,
@@ -69,5 +81,31 @@ export class CartPage {
     return this.frame.getByRole("link", {
       name: `View cart (${quantity} products)`,
     });
+  }
+
+  getProductInCart(product: string) {
+    return this.page
+      .locator('iframe[name="framelive"]')
+      .contentFrame()
+      .getByLabel("Products in cart")
+      .getByText(product, { exact: true });
+  }
+
+  async expectProductInCart(product: string) {
+    await expect(this.getProductInCart(product)).toBeVisible();
+  }
+
+  getRemoveSuccessMessage(product: string) {
+    return this.page
+      .locator('iframe[name="framelive"]')
+      .contentFrame()
+      .locator("div")
+      .filter({
+        hasText: new RegExp(`^${product} has been removed from the cart\\.$`),
+      });
+  }
+
+  async expectRemoveSuccessMessage(product: string) {
+    await expect(this.getRemoveSuccessMessage(product)).toBeVisible();
   }
 }

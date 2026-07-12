@@ -6,6 +6,22 @@ export class SearchPage {
   }
   private readonly frame: FrameLocator;
 
+  getProduct(productName: string): Locator {
+    return this.frame
+      .locator("a.product-miniature__title", {
+        hasText: productName,
+      })
+      .first();
+  }
+
+  get productPrice(): Locator {
+    return this.frame.locator(".product-miniature__price").first();
+  }
+
+  get productImage(): Locator {
+    return this.frame.locator("img.product-miniature__image").first();
+  }
+
   get searchInput(): Locator {
     return this.frame.getByPlaceholder("Search products...");
   }

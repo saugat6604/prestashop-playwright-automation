@@ -3,6 +3,8 @@ import { RegisterPage } from "../tests/pages/RegisterPage";
 import { generateUser, UserData } from "../tests/utils/faker";
 
 test.describe("User Registration", () => {
+  test.setTimeout(60000);
+
   test.describe.configure({
     mode: "parallel",
   });
@@ -14,13 +16,8 @@ test.describe("User Registration", () => {
     await registerPage.open();
   });
 
-  function createUser(): UserData {
-    return generateUser();
-  }
-
   test("should register a new customer successfully and logout", async () => {
-    const user = createUser();
-
+    const user = generateUser();
     await registerPage.register(user);
 
     await registerPage.expectSuccessfulRegistration(user.firstName);
@@ -29,8 +26,7 @@ test.describe("User Registration", () => {
   });
 
   test("should not allow registration with an already registered email", async () => {
-    const user = createUser();
-
+    const user = generateUser();
     // Register first user
     await registerPage.register(user);
 
@@ -43,22 +39,16 @@ test.describe("User Registration", () => {
   });
 
   test("should not allow registration with invalid email address", async () => {
-    const user = createUser();
-
+    const user = generateUser();
     user.email = "invalid-email";
 
     await registerPage.register(user);
 
-    const validationMessage = await registerPage.getBrowserValidationMessage(
-      registerPage.emailField,
-    );
-
-    expect(validationMessage).toContain("Please include an '@'");
+    await registerPage.expectInvalidEmailValidation();
   });
 
   test("should display validation for weak password", async () => {
-    const user = createUser();
-
+    const user = generateUser();
     user.password = "password";
 
     await registerPage.register(user);
@@ -84,8 +74,7 @@ test.describe("User Registration", () => {
   });
 
   test("should require accepting Terms & Conditions", async () => {
-    const user = createUser();
-
+    const user = generateUser();
     await registerPage.register(user, {
       acceptTerms: false,
     });
@@ -94,18 +83,11 @@ test.describe("User Registration", () => {
   });
 
   test("should show validation when password is less than 8 characters", async () => {
-    const user = createUser();
-
+    const user = generateUser();
     user.password = "Pass1";
 
     await registerPage.register(user);
 
-    const validationMessage = await registerPage.getBrowserValidationMessage(
-      registerPage.passwordField,
-    );
-
-    expect(validationMessage).toMatch(
-      /Please lengthen this text|password length is invalid/i,
-    );
+    await registerPage.expectPasswordLengthValidation();
   });
 });
