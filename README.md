@@ -1,191 +1,230 @@
-# Playwright Automation Testing Framework
+# Playwright Automation Framework - PrestaShop Demo
 
-A modern, scalable automation testing framework built with Playwright and TypeScript, following the Page Object Model pattern.
+This project contains an end-to-end automation framework built using **Playwright + TypeScript** following the **Page Object Model (POM)** design pattern.
 
-## Features
+The framework automates the critical user journeys of the PrestaShop Demo Store including user registration, login, product search, cart management, and checkout.
 
-✅ Playwright test automation framework
-✅ TypeScript with strict type checking
-✅ Page Object Model pattern for maintainability
-✅ Multi-browser support (Chromium, Firefox, WebKit)
-✅ HTML test reports with screenshots and videos
-✅ Parallel test execution
-✅ Debug and UI mode support
-✅ Test retry mechanism
+---
 
-## Prerequisites
+# Tech Stack
 
-- Node.js 18+ installed
-- npm package manager
+- Playwright
+- TypeScript
+- Faker.js
+- Page Object Model (POM)
+- Playwright HTML Reporter
+- Git & GitHub
 
-## Installation
+---
 
-1. Navigate to the project directory:
-```bash
-cd Assignment
+# Project Structure
+
+```
+.
+├── pages/
+│   ├── HomePage.ts
+│   ├── LoginPage.ts
+│   ├── RegisterPage.ts
+│   ├── ProductPage.ts
+│   ├── CartPage.ts
+│   ├── CheckoutPage.ts
+│   └── OrderSuccessPage.ts
+│
+├── utils/
+│   ├── faker.ts
+│   ├── authHelper.ts
+│   └── cartHelper.ts
+│
+├── tests/
+│   ├── registration.spec.ts
+│   ├── login.spec.ts
+│   ├── search.spec.ts
+│   ├── cart.spec.ts
+│   └── purchase.spec.ts
+│
+├── playwright.config.ts
+├── package.json
+└── README.md
 ```
 
-2. Install dependencies:
+---
+
+# Folder Explanation
+
+## pages/
+
+Contains all Page Object Model classes.
+
+Each page contains:
+
+- Locators
+- Actions
+- Assertions
+
+Examples:
+
+- **HomePage.ts** → Homepage actions
+- **LoginPage.ts** → Login functionality
+- **RegisterPage.ts** → User registration
+- **ProductPage.ts** → Product interactions
+- **CartPage.ts** → Cart operations
+- **CheckoutPage.ts** → Checkout process
+- **OrderSuccessPage.ts** → Order confirmation validation
+
+---
+
+## utils/
+
+Contains reusable helper functions.
+
+### faker.ts
+
+Generates dynamic test data using Faker.
+
+### authHelper.ts
+
+Contains reusable authentication methods.
+
+### cartHelper.ts
+
+Contains reusable cart-related utility methods.
+
+---
+
+## tests/
+
+Contains all Playwright test cases.
+
+Current test suites:
+
+- Registration
+- Login
+- Product Search
+- Cart Operations
+- Complete Purchase Flow
+
+---
+
+# Test Scenarios
+
+## Registration
+
+- Register a new user with dynamic data
+- Validate successful registration
+
+## Login
+
+- Login using registered user
+- Validate successful authentication
+
+## Search
+
+- Search existing product
+- Search non-existing product
+
+## Cart
+
+- Add product to cart
+- Remove product from cart
+- Validate empty cart
+
+## Checkout
+
+- Complete purchase flow
+- Validate order confirmation
+
+---
+
+# Installation
+
+Clone repository
+
+```bash
+git clone <repository-url>
+```
+
+Install dependencies
+
 ```bash
 npm install
 ```
 
-3. Install Playwright browsers:
+---
+
+# Running Tests
+
+Run all tests
+
 ```bash
-npx playwright install
+npx playwright test
 ```
 
-## Running Tests
+Run a specific test
 
-### Run all tests
 ```bash
-npm test
+npx playwright test tests/login.spec.ts
 ```
 
-### Run tests in headed mode (see browser)
+Run in headed mode
+
 ```bash
-npm run test:headed
+npx playwright test --headed
 ```
 
-### Run tests in debug mode
+Run with one retry
+
 ```bash
-npm run test:debug
+npx playwright test --retries=1
 ```
 
-### Run tests in UI mode
+---
+
+# HTML Report
+
+Generate report
+
 ```bash
-npm run test:ui
+npx playwright show-report
 ```
 
-### View test report
-```bash
-npm run test:report
-```
+---
 
-### Generate test code using Codegen
-```bash
-npm run test:codegen
-```
+# Framework Features
+
+- Page Object Model
+- Reusable Components
+- Dynamic Test Data
+- Retry Support
+- HTML Reporting
+- Easy Maintenance
+- TypeScript Support
+
+---
+
+# Screenshots
 
 ## Project Structure
 
-```
-Assignment/
-├── tests/
-│   ├── pages/
-│   │   ├── BasePage.ts           # Base class for all page objects
-│   │   └── ExamplePage.ts        # Example page object
-│   ├── utils/                    # Utility functions
-│   └── example.spec.ts           # Example test file
-├── playwright.config.ts          # Playwright configuration
-├── tsconfig.json                 # TypeScript configuration
-├── package.json                  # Project dependencies
-├── README.md                     # This file
-└── .gitignore                    # Git ignore rules
-```
+![Project Structure](screenshots/project-structure.png)
 
-## Page Object Model Pattern
+---
 
-This project uses the Page Object Model (POM) pattern for better test maintainability:
+## HTML Report Summary
 
-### BasePage
-Base class that all page objects inherit from, containing common actions like navigation and waits.
+![HTML Report](screenshots/html-report-summary.png)
 
-### ExamplePage
-Example page object that extends BasePage and contains page-specific locators and methods.
+---
 
-### Creating a New Page Object
-1. Create a new file in `tests/pages/` (e.g., `LoginPage.ts`)
-2. Extend `BasePage`
-3. Define page locators
-4. Add page-specific methods
+## Test Result Details
 
-Example:
-```typescript
-import { Page, Locator } from '@playwright/test';
-import { BasePage } from './BasePage';
+![Test Details](Screenshot/Screenshot1.png)
+![Test Details](Screenshot/Screenshot2.png)
+![Test Details](Screenshot/Screenshot3.png)
 
-export class LoginPage extends BasePage {
-  readonly usernameInput: Locator;
-  readonly passwordInput: Locator;
-  readonly loginButton: Locator;
+---
 
-  constructor(page: Page) {
-    super(page);
-    this.usernameInput = page.locator('#username');
-    this.passwordInput = page.locator('#password');
-    this.loginButton = page.locator('button:has-text("Login")');
-  }
+# Author
 
-  async login(username: string, password: string) {
-    await this.usernameInput.fill(username);
-    await this.passwordInput.fill(password);
-    await this.loginButton.click();
-  }
-}
-```
+**Saugat Paudel**
 
-## Writing Tests
-
-Example test using Page Object Model:
-
-```typescript
-import { test, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-
-test('user can login', async ({ page }) => {
-  const loginPage = new LoginPage(page);
-  await loginPage.goto('https://example.com/login');
-  await loginPage.login('user@example.com', 'password123');
-  
-  // Assertions
-  expect(page.url()).toContain('/dashboard');
-});
-```
-
-## Configuration
-
-### Playwright Config (playwright.config.ts)
-- **testDir**: Directory containing tests
-- **fullyParallel**: Run tests in parallel
-- **retries**: Retry failed tests
-- **reporter**: Generate HTML reports
-- **projects**: Define browsers to test on
-
-### TypeScript Config (tsconfig.json)
-- **strict**: Strict type checking enabled
-- **paths**: Path aliases (@pages, @utils)
-- **esModuleInterop**: Better ES module compatibility
-
-## Troubleshooting
-
-### Tests not running?
-```bash
-npx playwright install
-npm install
-npm test
-```
-
-### Browser not launching?
-Ensure all dependencies are installed and browsers are installed.
-
-### Can't find modules?
-Check tsconfig.json paths configuration and ensure TypeScript paths match your imports.
-
-## CI/CD Integration
-
-The project is configured for CI/CD. When running in CI environment:
-- Set `CI=true` environment variable
-- Tests will use 2 retries
-- Workers set to 1
-- Screenshots and videos retained on failures
-
-## Additional Resources
-
-- [Playwright Documentation](https://playwright.dev)
-- [Playwright Best Practices](https://playwright.dev/docs/best-practices)
-- [Page Object Model Pattern](https://playwright.dev/docs/pom)
-
-## License
-
-MIT
+QA Engineer | Playwright | TypeScript | API Testing
