@@ -263,7 +263,7 @@ export class RegisterPage {
 
     await this.signOutButton.click();
 
-    await expect(this.signInLink).toBeVisible();
+    await expect(homePage.signInLink).toBeVisible();
   }
 
   // -------------------------
@@ -273,7 +273,7 @@ export class RegisterPage {
   async expectSuccessfulRegistration(firstName: string) {
     await expect(this.frame.getByText(firstName)).toBeVisible();
 
-    await expect(this.signInLink).not.toBeVisible();
+    await expect(homePage.signInLink).not.toBeVisible();
   }
 
   async expectDuplicateEmailError() {
