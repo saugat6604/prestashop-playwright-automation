@@ -19,31 +19,47 @@ The framework automates the critical user journeys of the PrestaShop Demo Store 
 
 # Project Structure
 
-```
+```text
 .
-├── pages/
-│   ├── HomePage.ts
-│   ├── LoginPage.ts
-│   ├── RegisterPage.ts
-│   ├── ProductPage.ts
-│   ├── CartPage.ts
-│   ├── CheckoutPage.ts
-│   └── OrderSuccessPage.ts
+├── .github/
+│   └── workflows/
+│       └── playwright.yml          # GitHub Actions workflow
 │
-├── utils/
-│   ├── faker.ts
-│   ├── authHelper.ts
-│   └── cartHelper.ts
+├── Screenshot/                     # README screenshots
+│   ├── Screenshot.png
+│   ├── Screenshot-1.png
+│   ├── Screenshot-2.png
+│   └── Screenshot-3.png
 │
 ├── tests/
+│   ├── pages/
+│   │   ├── HomePage.ts
+│   │   ├── LoginPage.ts
+│   │   ├── RegisterPage.ts
+│   │   ├── SearchPage.ts
+│   │   ├── ProductPage.ts
+│   │   ├── CartPage.ts
+│   │   ├── CheckoutPage.ts
+│   │   └── OrderSuccessPage.ts
+│   │
+│   ├── utils/
+│   │   ├── faker.ts
+│   │   ├── authHelper.ts
+│   │   └── cartHelper.ts
+│   │
 │   ├── registration.spec.ts
 │   ├── login.spec.ts
 │   ├── search.spec.ts
 │   ├── cart.spec.ts
 │   └── purchase.spec.ts
 │
+├── playwright-report/
+├── test-results/
 ├── playwright.config.ts
 ├── package.json
+├── package-lock.json
+├── tsconfig.json
+├── .env
 └── README.md
 ```
 
@@ -66,6 +82,7 @@ Examples:
 - **HomePage.ts** → Homepage actions
 - **LoginPage.ts** → Login functionality
 - **RegisterPage.ts** → User registration
+- **SearchPage.ts** → Product search functionality
 - **ProductPage.ts** → Product interactions
 - **CartPage.ts** → Cart operations
 - **CheckoutPage.ts** → Checkout process
@@ -79,7 +96,7 @@ Contains reusable helper functions.
 
 ### faker.ts
 
-Generates dynamic test data using Faker.
+Generates dynamic user data using Faker.
 
 ### authHelper.ts
 
@@ -87,51 +104,99 @@ Contains reusable authentication methods.
 
 ### cartHelper.ts
 
-Contains reusable cart-related utility methods.
+Contains reusable methods for adding products to the cart.
 
 ---
 
 ## tests/
 
-Contains all Playwright test cases.
+Contains all Playwright test suites.
 
 Current test suites:
 
 - Registration
 - Login
 - Product Search
-- Cart Operations
-- Complete Purchase Flow
+- Cart
+- Purchase Flow
 
 ---
 
-# Test Scenarios
+# Test Coverage
 
-## Registration
+## 👤 User Registration (7 Tests)
 
-- Register a new user with dynamic data
-- Validate successful registration
+- Register a new customer successfully
+- Logout after successful registration
+- Prevent duplicate email registration
+- Validate invalid email format
+- Validate weak password
+- Validate minimum password length
+- Validate required registration fields
+- Verify Terms & Conditions acceptance
 
-## Login
+---
 
-- Login using registered user
-- Validate successful authentication
+## 🔐 User Login (8 Tests)
 
-## Search
+- Login successfully with a newly registered user
+- Logout after successful login
+- Validate empty email and password
+- Validate empty email
+- Validate empty password
+- Validate invalid email format
+- Prevent login with incorrect password
+- Prevent login with an unregistered email
+- Login again after logout
 
-- Search existing product
-- Search non-existing product
+---
 
-## Cart
+## 🔍 Product Search (2 Tests)
 
-- Add product to cart
-- Remove product from cart
-- Validate empty cart
+- Search for an existing product
+- Verify search results are displayed
+- Verify product price is displayed
+- Verify product image is displayed
+- Search for a non-existing product
+- Verify "No search results" message is displayed
 
-## Checkout
+---
 
-- Complete purchase flow
-- Validate order confirmation
+## 🛒 Shopping Cart (2 Tests)
+
+- Add a product to the shopping cart
+- Verify the selected product is displayed in the cart
+- Remove a product from the shopping cart
+- Verify successful product removal
+
+---
+
+## 💳 Purchase Flow (1 End-to-End Test)
+
+- Search for a product
+- Add the product to the cart
+- Update product quantity
+- Proceed to checkout
+- Fill personal information
+- Enter shipping address
+- Select shipping method
+- Choose Cash on Delivery payment
+- Accept Terms & Conditions
+- Place the order
+- Verify successful order confirmation
+
+---
+
+## 📊 Automation Summary
+
+| Test Suite                | Test Cases |
+| ------------------------- | ---------: |
+| User Registration         |          7 |
+| User Login                |          8 |
+| Product Search            |          2 |
+| Shopping Cart             |          2 |
+| Purchase Flow             |          1 |
+| **Total Automated Tests** |     **20** |
 
 ---
 
@@ -147,6 +212,12 @@ Install dependencies
 
 ```bash
 npm install
+```
+
+Install Playwright browsers
+
+```bash
+npx playwright install
 ```
 
 ---
@@ -191,24 +262,42 @@ npx playwright show-report
 
 # Framework Features
 
-- Page Object Model
-- Reusable Components
-- Dynamic Test Data
-- Retry Support
+- Page Object Model (POM)
+- TypeScript
+- Reusable Page Objects
+- Reusable Helper Methods
+- Dynamic Test Data using Faker
 - HTML Reporting
+- Retry Support
+- Parallel Execution
+- GitHub Actions CI/CD Ready
 - Easy Maintenance
-- TypeScript Support
 
 ---
 
 # Screenshots
 
+## Project Structure
+
+![Project Structure](Screenshot/Screenshot.png)
+
+---
+
+## Playwright HTML Report Overview
+
+![HTML Report Overview](Screenshot/Screenshot-1.png)
+
+---
+
 ## Test Result Details
 
-![Test Details](Screenshot/Screenshot.png)
-![Test Details](Screenshot/Screenshot-1.png)
-![Test Details](Screenshot/Screenshot-2.png)
-![Test Details](Screenshot/Screenshot-3.png)
+![Test Result Details](Screenshot/Screenshot-2.png)
+
+---
+
+## Test Execution Summary
+
+![Test Execution Summary](Screenshot/Screenshot-3.png)
 
 ---
 
@@ -216,4 +305,12 @@ npx playwright show-report
 
 **Saugat Paudel**
 
-QA Engineer | Playwright | TypeScript | API Testing
+**QA Engineer**
+
+**Skills**
+
+- Playwright
+- TypeScript
+- API Testing
+- Automation Testing
+- Page Object Model (POM)
