@@ -277,29 +277,13 @@ npx playwright show-report
 
 # Screenshots
 
-## Project Structure
+!(Screenshot/Screenshot.png)
 
-![Project Structure](Screenshot/Screenshot.png)
+!(Screenshot/Screenshot-1.png)
 
----
+!(Screenshot/Screenshot-2.png)
 
-## Playwright HTML Report Overview
-
-![HTML Report Overview](Screenshot/Screenshot-1.png)
-
----
-
-## Test Result Details
-
-![Test Result Details](Screenshot/Screenshot-2.png)
-
----
-
-## Test Execution Summary
-
-![Test Execution Summary](Screenshot/Screenshot-3.png)
-
----
+!(Screenshot/Screenshot-3.png)
 
 # Author
 
