@@ -47,13 +47,6 @@ export class HomePage {
     return this.frame.locator("img.product-miniature__image").first();
   }
 
-  async openFirstProduct() {
-    await this.productItems.first().click();
-  }
-
-  async expectSearchResult(product: string) {
-    await expect(this.productName.first()).toContainText(product);
-  }
   async open() {
     await this.page.goto("/#/en/front");
   }
