@@ -20,8 +20,7 @@ test.describe("Cart", () => {
     cartPage = new CartPage(page);
     searchPage = new SearchPage(page);
 
-    await page.goto("https://demo.prestashop.com/#/en/front");
-
+    await homePage.open();
     await addProductToCart(
       homePage,
       searchPage,

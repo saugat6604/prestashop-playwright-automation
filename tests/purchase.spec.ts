@@ -29,7 +29,7 @@ test.describe("Purchase Flow", () => {
     orderSuccessPage = new OrderSuccessPage(page);
     searchPage = new SearchPage(page);
 
-    await registerPage.open();
+    await homePage.open();
   });
 
   test("from product search to order placement", async ({ page }) => {
