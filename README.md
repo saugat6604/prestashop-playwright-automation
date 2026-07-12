@@ -277,13 +277,15 @@ npx playwright show-report
 
 # Screenshots
 
-!(Screenshot/Screenshot.png)
-
-!(Screenshot/Screenshot-1.png)
-
-!(Screenshot/Screenshot-2.png)
-
-!(Screenshot/Screenshot-3.png)
+<p align="center">
+  <img src="Screenshot/Screenshot.png" width="800"/>
+  <br><br>
+  <img src="Screenshot/Screenshot-1.png" width="800"/>
+  <br><br>
+  <img src="Screenshot/Screenshot-2.png" width="800"/>
+  <br><br>
+  <img src="Screenshot/Screenshot-3.png" width="800"/>
+</p>
 
 # Author
 
