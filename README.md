@@ -205,6 +205,7 @@ npx playwright show-report
 
 ## Test Result Details
 
+![Test Details](Screenshot/Screenshot.png)
 ![Test Details](Screenshot/Screenshot-1.png)
 ![Test Details](Screenshot/Screenshot-2.png)
 ![Test Details](Screenshot/Screenshot-3.png)
